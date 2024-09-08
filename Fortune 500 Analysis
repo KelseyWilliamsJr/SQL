@@ -102,3 +102,34 @@ END AS Tier_Levels
 FROM fortune_companies
 WHERE healthcare_benefits=1
 ORDER BY revenue DESC;
+
+
+-- Which company in the Retail industry has the least revenue, and what is their revenue? 
+SELECT company_name, min(revenue)
+FROM fortune_companies
+WHERE industry="Retail";
+
+
+-- Which industries have an average revenue of at least $200 Billion, and what are their avg revenues?
+SELECT industry, ROUND(AVG(revenue),1) AS average_revenue_billions
+FROM fortune_companies
+GROUP BY industry
+HAVING average_revenue_billions>=200;
+
+
+-- Which companies have healthcare benefits *and* at least 20 paid time off days?
+SELECT company_name, healthcare_benefits, paid_time_off_days
+FROM fortune_companies
+WHERE healthcare_benefits=1
+AND paid_time_off_days>20
+ORDER BY paid_time_off_days desc;
+
+
+-- Assign all the companies in the Healthcare industry as "mother friendly workplace", "acceptable", or "abysmal" based on the maternity leave offered. 
+SELECT company_name
+,CASE WHEN maternity_leave_weeks >=10 THEN "Mother Friendly Workplace"
+WHEN maternity_leave_weeks >=8 THEN "Acceptable"
+ELSE "Abysmal"
+END AS mother_friendliness
+FROM fortune_companies
+WHERE industry="Healthcare";
