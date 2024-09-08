@@ -59,32 +59,46 @@ VALUES
     ('Company KK', 'Healthcare', 150.2, 3400, 0, 16, 8, 5.3);
 
 
-#For this project, I used SQL to query the Fortune 500 Company database to get information about     items sold at the store and their prices. 
+#For this project, I used SQL to query the Fortune 500 Company database to get information about each company's industry and revenue. 
 
 SELECT *
 FROM fortune_companies;
 
 
--- Summarize how many companies are in each industry.
+-- Summarize the number of companies in each industry.
+SELECT industry, COUNT(industry)
+FROM fortune_companies
+GROUP BY industry;
 
 
-
--- Show companies in that are only in the technology industry and show their revenue.
-
-
-
--- Show companies that have employee benefits aand at least 20 day of paid time off.
-
+-- Show companies that are in the retail industry and show their revenue.
+SELECT industry, company_name, revenue
+FROM fortune_companies
+WHERE industry="Retail"
+ORDER BY revenue desc;
 
 
+--Show companies that have healthcare benefits but are not in the technology industry.
+SELECT *
+FROM fortune_companies
+WHERE healthcare_benefits IN ("1")
+AND industry NOT IN ("Technology");
 
 
+-- Show company name, industry, revenue and paid time off for companies that have at least 20 days of paid time off and rename paid time off column to PTO.
+SELECT company_name, industry, revenue, paid_time_off_days AS PTO
+FROM fortune_companies
+GROUP BY industry
+HAVING paid_time_off_days>=20;
 
 
-
-
-
-
-
-
-
+-- Categorize companies with healthcare benefits by top, mid, low and bottom tier based on revenue and name new column Tier_Levels.
+SELECT company_name, industry, revenue, healthcare_benefits, paid_time_off_days
+,CASE WHEN revenue >=500 THEN "Top Tier"
+WHEN revenue >=350 THEN "Mid Tier"
+WHEN revenue >=250 THEN "Low Tier"
+ELSE "Bottom"
+END AS Tier_Levels
+FROM fortune_companies
+WHERE healthcare_benefits=1
+ORDER BY revenue DESC;
