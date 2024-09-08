@@ -61,6 +61,26 @@ VALUES
 
 #For this project, I used SQL to query the Fortune 500 Company database to get information about     items sold at the store and their prices. 
 
+SELECT *
+FROM fortune_companies;
+
+
+-- Summarize how many companies are in each industry.
+
+
+
+-- Show companies in that are only in the technology industry and show their revenue.
+
+
+
+-- Show companies that have employee benefits aand at least 20 day of paid time off.
+
+
+
+
+
+
+
 
 
 
