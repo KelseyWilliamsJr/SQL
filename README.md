@@ -5,4 +5,4 @@
 
 ## Welcome to my SQL portfolio! This code repository contains examples of SQL I've written. Feel free to take a look and reach out if you have any questions.
 
-Return to my LinkedIn profile [here!](https://www.linkedin.com/in/kelseywilliams3/)
+Go to my LinkedIn profile [here!](https://www.linkedin.com/in/kelseywilliams3/)
