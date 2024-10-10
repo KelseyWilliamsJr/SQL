@@ -1,0 +1,156 @@
+# For this project, I downloaded digital media store and includes tables for artists, albums, media tracks, invoices, and customers.
+# Then I created a table to insert the data into.
+# Finally, I performed analytics on the data using SQL. 
+
+
+-- Show customers full name, customer id and country who are not in the US. 
+SELECT CustomerId
+,FirstName
+,LastName
+,Country
+FROM customers
+WHERE country<> "USA"
+;
+
+
+-- Show only customers in Brazil.
+SELECT CustomerId
+,FirstName
+,LastName
+,Country
+FROM customers
+WHERE country="Brazil"
+;
+
+
+-- Find invoices of customer who are from Brazil and show full name, invoice id, date of invoice and billing country. 
+SELECT invoices.CustomerID
+,FirstName
+,LastName
+,invoices.InvoiceId
+,invoices.InvoiceDate
+,invoices.BillingCountry
+FROM customers
+
+INNER JOIN invoices
+ON invoices.CustomerId=customers.CustomerId
+WHERE customers.Country="Brazil"
+;
+
+
+-- Show employees who are also sales agents.
+SELECT FirstName
+,LastName
+,Title
+FROM employees
+WHERE Title LIKE "%Agent%"
+;
+
+
+--Find a unique/distinct list of billing countries from the Invoice table and list in alphabetical order.
+SELECT DISTINCT BillingCountry
+FROM invoices
+ORDER BY BillingCountry asc
+;
+
+
+-- Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+SELECT invoices.InvoiceId
+,customers.SupportRepId
+,employees.FirstName ||" " || employees.LastName AS 'Sales Agent'
+FROM invoices
+JOIN customers
+ON customers.CustomerId=invoices.CustomerId
+INNER JOIN employees
+ON employees.EmployeeId=customers.SupportRepId
+ORDER BY employees.EmployeeId
+;
+
+
+-- Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+SELECT invoices.Total
+,customers.FirstName ||" "|| customers.LastName AS "Customer Name"
+,customers.Country
+,employees.FirstName ||" "|| employees.LastName AS "Sales Agent"
+FROM invoices
+JOIN customers
+ON customers.CustomerId=invoices.CustomerId
+INNER JOIN employees
+ON employees.EmployeeId=customers.SupportRepId
+ORDER BY customers.CustomerId
+;
+
+
+-- How many Invoices were there in 2009?
+SELECT COUNT(InvoiceId)
+FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01 00:00:00' AND '2009-12-31 23:59:59'
+;
+
+
+-- Write a query that includes the purchased track name with each invoice line ID
+SELECT invoice_items.InvoiceLineId
+,tracks.Name AS 'Track Name'
+FROM invoice_items
+JOIN tracks
+ON tracks.TrackId=invoice_items.TrackId
+ORDER BY InvoiceId
+;
+
+
+-- Write a query that includes the purchased track name AND artist name with each invoice line ID.
+SELECT invoice_items.InvoiceLineId
+,tracks.Name AS 'Purchased Track Name'
+,artists.Name AS 'Artist Name'
+FROM invoice_items
+JOIN tracks
+ON tracks.TrackId=invoice_items.TrackId
+JOIN albums
+ON albums.AlbumId=tracks.AlbumId
+JOIN artists
+ON artists.ArtistId=albums.ArtistId
+ORDER BY InvoiceId
+;
+
+
+-- Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+SELECT tracks.Name AS 'Track'
+,albums.Title AS 'Album'
+,media_types.Name AS 'Media Type'
+,genres.Name AS 'Genre'
+FROM tracks
+JOIN albums
+ON tracks.AlbumId=albums.AlbumId
+JOIN media_types
+ON tracks.MediaTypeId=media_types.MediaTypeId
+JOIN genres
+ON tracks.MediaTypeId=genres.GenreId
+ORDER BY tracks.Name
+;
+
+
+-- Show the total sales made by each sales agent.
+SELECT employees.FirstName ||" "|| employees.LastName AS 'Sales Agent'
+,ROUND(SUM(invoices.Total),2)AS 'Total Sales'
+FROM invoices
+JOIN customers
+ON invoices.CustomerId=customers.CustomerId
+JOIN employees
+ON customers.SupportRepId=employees.EmployeeId
+GROUP BY employees.EmployeeId
+;
+
+
+-- Which sales agent made the most dollars in sales in 2009?
+SELECT employees.FirstName ||" "|| employees.LastName AS 'Sales Agent'
+,ROUND(SUM(invoices.Total),2)AS 'Total 2009 Sales'
+FROM invoices
+JOIN customers
+ON invoices.CustomerId=customers.CustomerId
+JOIN employees
+ON customers.SupportRepId=employees.EmployeeId
+WHERE InvoiceDate BETWEEN '2009-01-01 00:00:00' AND '2009-12-31 23:59:59'
+GROUP BY employees.EmployeeId
+ORDER BY SUM(invoices.Total) DESC
+LIMIT 1
+;
